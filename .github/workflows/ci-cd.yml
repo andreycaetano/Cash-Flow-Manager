@@ -1,0 +1,79 @@
+# .github/workflows/ci-cd.yml
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: ./frontend
+
+    - name: Build frontend
+      run: npm run build
+      working-directory: ./frontend
+
+    - name: Run frontend tests
+      run: npm test
+      working-directory: ./frontend
+
+    - name: Install backend dependencies
+      run: npm install
+      working-directory: ./backend
+
+    - name: Build backend
+      run: npm run build
+      working-directory: ./backend
+
+    - name: Run backend tests
+      run: npm test
+      working-directory: ./backend
+
+    # - name: Deploy backend to production
+    #   env:
+    #     RENDER_API_TOKEN: ${{ secrets.RENDER_API_TOKEN }}
+    #   run: |
+    #     curl -X POST \
+    #         -H "Authorization: Bearer $RENDER_API_TOKEN" \
+    #         -H "Content-Type: application/json" \
+    #         -d '{
+    #             "name": "cash_flow_manager",
+    #             "image": "your-backend-docker-image:latest",
+    #             "branch": "main",
+    #             "buildCommand": "npm run build",
+    #             "startCommand": "npm start"
+    #             }' \
+    #         https://api.render.com/v1/services/srv-cqf9ribgbbvc7391ct7g/deploys
+
+    # - name: Deploy frontend to production
+    #   env:
+    #     RENDER_API_TOKEN: ${{ secrets.RENDER_API_TOKEN }}
+    #   run: |
+    #     curl -X POST \
+    #         -H "Authorization: Bearer $RENDER_API_TOKEN" \
+    #         -H "Content-Type: application/json" \
+    #         -d '{
+    #             "name": "cash_flow_manager-frontend",
+    #             "image": "your-frontend-docker-image:latest",
+    #             "branch": "main",
+    #             "buildCommand": "npm run build",
+    #             "startCommand": "serve -s dist"
+    #             }' \
+    #         https://api.render.com/v1/services/srv-cqfads0gph6c73bau1m0/deploys
