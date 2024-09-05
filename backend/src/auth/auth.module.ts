@@ -8,6 +8,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { LocalStrategy } from './strategies/local.strategy';
 import { LoginValidationMiddleware } from './middlewares/loginValidation.middleware';
 import { MailModule } from 'src/app/mail/mail.module';
+import { GoogleStrategy } from './strategies/google.strategy';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { MailModule } from 'src/app/mail/mail.module';
     })
   ],
   controllers: [AuthController],
-  providers: [JwtStrategy, AuthService, LocalStrategy]
+  providers: [JwtStrategy, AuthService, LocalStrategy, GoogleStrategy]
 })
 export class AuthModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

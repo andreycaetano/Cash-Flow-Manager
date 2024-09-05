@@ -1,5 +1,6 @@
 import {
     Controller,
+    Get,
     HttpCode,
     HttpStatus,
     Post,
@@ -15,6 +16,7 @@ import { ResetPasswordDto } from './dto/resetPassword.dto';
 import { LocalAuthGuard } from './guards/localAuth.guard';
 import { AuthRequest } from './interfaces/authRequest.interface';
 import { LoginRequestBody } from './models/loginRequestBody.model';
+import { AuthGuard } from '@nestjs/passport';
 
 @ApiTags('Auth')
 @Controller()
@@ -68,5 +70,23 @@ export class AuthController {
     async resetPassword(@Request() resetPasswordDto: ResetPasswordDto) {
         const decoded = await this.authService.verifyToken(resetPasswordDto.token);
         return await this.userService.update(decoded.sub, { password: resetPasswordDto.newPassword })
+    }
+
+    @IsPublic()
+    @Get('google')
+    @UseGuards(AuthGuard('google'))
+    async googleAuth(@Request() req) {
+
+    }
+
+    
+    @Get('google/redirect')
+    @UseGuards(AuthGuard('google'))
+    googleAuthRedirect(@Request() req) {
+        
+        return {
+            message: 'Usuario autenticado com sucesso!',
+            user: req.user
+        }
     }
 }
